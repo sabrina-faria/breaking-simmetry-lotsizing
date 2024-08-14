@@ -76,15 +76,15 @@ if __name__ == "__main__":
         path_to_save="otimizados_8_experiment_1.xlsx",
         env_formulation="8_ref",
     )
-    # running_all_instance_with_chosen_capacity(
-    #     context,
-    #     ninth_formulation_build_model,
-    #     path_to_save="otimizados_9_experiment_1.xlsx",
-    #     env_formulation="9_ref",
-    # )
     running_all_instance_with_chosen_capacity(
         context,
-        tenth_formulation_build_model,
-        path_to_save="otimizados_10_experiment_1.xlsx",
-        env_formulation="10_ref",
+        ninth_formulation_build_model,
+        path_to_save="otimizados_9_experiment_1.xlsx",
+        env_formulation="9_ref",
     )
+    # running_all_instance_with_chosen_capacity(
+    #     context,
+    #     tenth_formulation_build_model,
+    #     path_to_save="otimizados_10_experiment_1.xlsx",
+    #     env_formulation="10_ref",
+    # )
