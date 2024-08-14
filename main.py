@@ -13,6 +13,7 @@ from sixth_formulation import build_model as sixth_formulation_build_model
 from seventh_formulation import build_model as seventh_formulation_build_model
 from eigth_formulation import build_model as eigth_formulation_build_model
 from ninth_formulation import build_model as ninth_formulation_build_model
+from tenth_formulation import build_model as tenth_formulation_build_model
 
 if __name__ == "__main__":
     for num in [1]:
@@ -80,4 +81,10 @@ if __name__ == "__main__":
     #     ninth_formulation_build_model,
     #     path_to_save="otimizados_9_experiment_1.xlsx",
     #     env_formulation="9_ref",
+    # )
+    # running_all_instance_with_chosen_capacity(
+    #     context,
+    #     tenth_formulation_build_model,
+    #     path_to_save="otimizados_10_experiment_1.xlsx",
+    #     env_formulation="10_ref",
     # )
