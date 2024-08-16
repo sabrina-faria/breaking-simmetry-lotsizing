@@ -14,6 +14,9 @@ from seventh_formulation import build_model as seventh_formulation_build_model
 from eigth_formulation import build_model as eigth_formulation_build_model
 from ninth_formulation import build_model as ninth_formulation_build_model
 from tenth_formulation import build_model as tenth_formulation_build_model
+from eleventh_formulation import build_model as eleventh_formulation_build_model
+from twelfth_formulation import build_model as twelfth_formulation_build_model
+from thirteenth_formulation import build_model as thirteenth_formulation_build_model
 
 if __name__ == "__main__":
     for num in [1]:
@@ -64,27 +67,45 @@ if __name__ == "__main__":
     #     path_to_save="otimizados_6_experiment_1.xlsx",
     #     env_formulation="6_ref",
     # )
-    running_all_instance_with_chosen_capacity(
-        context,
-        seventh_formulation_build_model,
-        path_to_save="otimizados_7_experiment_1.xlsx",
-        env_formulation="7_ref",
-    )
-    running_all_instance_with_chosen_capacity(
-        context,
-        eigth_formulation_build_model,
-        path_to_save="otimizados_8_experiment_1.xlsx",
-        env_formulation="8_ref",
-    )
-    running_all_instance_with_chosen_capacity(
-        context,
-        ninth_formulation_build_model,
-        path_to_save="otimizados_9_experiment_1.xlsx",
-        env_formulation="9_ref",
-    )
+    # running_all_instance_with_chosen_capacity(
+    #     context,
+    #     seventh_formulation_build_model,
+    #     path_to_save="otimizados_7_experiment_1.xlsx",
+    #     env_formulation="7_ref",
+    # )
+    # running_all_instance_with_chosen_capacity(
+    #     context,
+    #     eigth_formulation_build_model,
+    #     path_to_save="otimizados_8_experiment_1.xlsx",
+    #     env_formulation="8_ref",
+    # )
+    # running_all_instance_with_chosen_capacity(
+    #     context,
+    #     ninth_formulation_build_model,
+    #     path_to_save="otimizados_9_experiment_1.xlsx",
+    #     env_formulation="9_ref",
+    # )
     # running_all_instance_with_chosen_capacity(
     #     context,
     #     tenth_formulation_build_model,
     #     path_to_save="otimizados_10_experiment_1.xlsx",
     #     env_formulation="10_ref",
     # )
+    running_all_instance_with_chosen_capacity(
+        context,
+        eleventh_formulation_build_model,
+        path_to_save="otimizados_11_experiment_1.xlsx",
+        env_formulation="11_ref",
+    )
+    running_all_instance_with_chosen_capacity(
+        context,
+        twelfth_formulation_build_model,
+        path_to_save="otimizados_12_experiment_1.xlsx",
+        env_formulation="12_ref",
+    )
+    running_all_instance_with_chosen_capacity(
+        context,
+        thirteenth_formulation_build_model,
+        path_to_save="otimizados_13_experiment_1.xlsx",
+        env_formulation="13_ref",
+    )
