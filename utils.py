@@ -165,10 +165,10 @@ def get_values_from_name(file_name: str, regex: str, index: int) -> int:
     
 def get_and_save_results(path_to_read: str, path_to_save: Path) -> None:
     list_files = []
-    target_formulation = get_values_from_name(path_to_save.name, "otimizados_[0-10]", -1)
+    target_formulation = get_values_from_name(path_to_save.name, "otimizados_[0-9]", -1)
     target_experiment = get_values_from_name(path_to_save.name, "experiment_[0-9]", -1)
     for file in Path(path_to_read).glob("*"):        
-        current_formulation_file = get_values_from_name(file.name, "[0-10]_ref", 0)                
+        current_formulation_file = get_values_from_name(file.name, "[0-9]_ref", 0)                
         current_experiment = get_values_from_name(file.name, "experiment_[0-9]", -1)            
         if  target_formulation == current_formulation_file and target_experiment == current_experiment:
             list_files.append(pd.read_excel(file))
