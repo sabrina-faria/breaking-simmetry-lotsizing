@@ -227,9 +227,9 @@ def running_all_instance_with_chosen_capacity(
     ).T.to_dict()
 
     # Atualizar a coluna "capacity" na tabela caps
-    for key in caps:
-        caps[key]['capacity'] = caps[key]['capacity'] * 0.90
-    print(caps)
+    # for key in caps:
+    #     caps[key]['capacity'] = caps[key]['capacity'] * 0.90
+    # print(caps)
 
     if not MPI_BOOL:        
         for dataset in constants.INSTANCES:
