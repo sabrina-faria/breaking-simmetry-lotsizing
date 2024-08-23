@@ -137,7 +137,7 @@ def constraint_split_max(mdl: Model, data: dataCS) -> Model:
     )
     return mdl
 
-def constraint_symmetry_breaking(mdl: Model, data: dataCS) -> Model:
+def constraint_simmetry_machine(mdl: Model, data: dataCS) -> Model:
     mdl.add_constraints(
         mdl.sum(2**(i-u)*(mdl.x[u,j-1,0,0]) for u in range(i+1)) <= 
         mdl.sum(2**(i-u)*(mdl.x[u,j,0,0]) for u in range(i+1))
