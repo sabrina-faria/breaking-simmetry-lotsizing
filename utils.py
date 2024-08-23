@@ -2,6 +2,8 @@ from typing import Dict, List
 import numpy as np
 import pandas as pd
 
+from typing import Optional
+
 import re
 
 from pathlib import Path
@@ -156,25 +158,35 @@ def running_all_instance_choose_capacity(context: ProjectContext, build_model) -
     print("Processamento de capacidades concluído.")
 
 
-def get_values_from_name(file_name: str, regex: str, index: int) -> int:
-    target = re.compile(regex).search(file_name)
-    if target:
-        return int(target[0][index])
-    else:
-        return -1        
-    
-def get_and_save_results(path_to_read: str, path_to_save: Path) -> None:
-    list_files = []
-    target_formulation = get_values_from_name(path_to_save.name, "otimizados_[0-9]", -1)
-    target_experiment = get_values_from_name(path_to_save.name, "experiment_[0-9]", -1)
-    for file in Path(path_to_read).glob("*"):        
-        current_formulation_file = get_values_from_name(file.name, "[0-9]_ref", 0)                
-        current_experiment = get_values_from_name(file.name, "experiment_[0-9]", -1)            
-        if  target_formulation == current_formulation_file and target_experiment == current_experiment:
-            list_files.append(pd.read_excel(file))
-    df_results_optimized = pd.concat(list_files)
-    df_results_optimized.to_excel(path_to_save, index=False)
+def get_values_from_name(file_name: str, regex: str, index: int) -> Optional[int]:
+    """Extrai um valor do nome do arquivo usando uma expressão regular."""
+    pattern = re.compile(regex)
+    match = pattern.search(file_name)
+    if match:
+        try:
+            return int(match.group(index))
+        except (IndexError, ValueError):
+            # Se houver um erro ao acessar o índice ou converter para inteiro, retorna -1
+            return -1
+    return -1
 
+def get_and_save_results(path_to_read: str, path_to_save: Path) -> None:
+    """Processa arquivos e salva os resultados em um arquivo Excel."""
+    list_files = []
+
+    target_formulation = get_values_from_name(path_to_save.name, "otimizados_(\d+)", 1)
+    target_experiment = get_values_from_name(path_to_save.name, "experiment_(\d+)", 1)
+    
+    for file in Path(path_to_read).glob("*"):
+        current_formulation_file = get_values_from_name(file.name, "(\d+)_ref", 1)
+        current_experiment = get_values_from_name(file.name, "experiment_(\d+)", 1)
+
+        if target_formulation == current_formulation_file and target_experiment == current_experiment:
+            list_files.append(pd.read_excel(file))
+    
+    if list_files:
+        df_results_optimized = pd.concat(list_files)
+        df_results_optimized.to_excel(path_to_save, index=False)
 
 def solve_optimized_model(
     context: ProjectContext, dataset: str, build_model, capacity: Dict, env_formulation: int, nmaquinas: int = 8
