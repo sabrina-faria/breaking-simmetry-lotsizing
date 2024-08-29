@@ -1,10 +1,12 @@
 from pathlib import Path
 
-INSTANCES = [f"F{i}.DAT" for i in range(1, 71)] + [f"G{i}.DAT" for i in range(1, 76)]
-#INSTANCES = [#"F1.DAT",
+INSTANCES = [f"F{i}.DAT" for i in range(1, 71)] + [f"G{i}.DAT" for i in range(1, 76)] + [f"X{i}{j}{k}{l}{m}{n}.DAT" for i in range(1, 4) for j in range(1,3) for k in [1,2,4] 
+             for l in range(1,3) for m in range(7,10) for n in ["A", "B", "C", "D", "E"]]
+#INSTANCES = ["F1.DAT",
               #"F25.DAT", 
               #"G59.DAT", 
-              #"G64.DAT"]
+              #"G64.DAT"
+              #"X11117A.DAT"]
 MAQUINAS = [2,4,6]
 NUM_POINTS = 10
 FAST_TIMELIMIT = 20
