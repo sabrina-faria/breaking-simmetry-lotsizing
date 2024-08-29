@@ -49,12 +49,12 @@ if __name__ == "__main__":
     #     path_to_save=f"otimizados_3_experiment_1.xlsx",
     #     env_formulation="3_ref",
     # )
-    running_all_instance_with_chosen_capacity(
-        context,
-        fourth_formulation_build_model,
-        path_to_save="otimizados_4_experiment_1.xlsx",
-        env_formulation="4_ref",
-    )
+    # running_all_instance_with_chosen_capacity(
+    #     context,
+    #     fourth_formulation_build_model,
+    #     path_to_save="otimizados_4_experiment_1.xlsx",
+    #     env_formulation="4_ref",
+    # )
     # running_all_instance_with_chosen_capacity(
     #     context,
     #     fifth_formulation_build_model,
@@ -103,9 +103,9 @@ if __name__ == "__main__":
     #     path_to_save="otimizados_12_experiment_1.xlsx",
     #     env_formulation="12_ref",
     # )
-    # running_all_instance_with_chosen_capacity(
-    #     context,
-    #     thirteenth_formulation_build_model,
-    #     path_to_save="otimizados_13_experiment_1.xlsx",
-    #     env_formulation="13_ref",
-    # )
+    running_all_instance_with_chosen_capacity(
+        context,
+        thirteenth_formulation_build_model,
+        path_to_save="otimizados_13_experiment_1.xlsx",
+        env_formulation="13_ref",
+    )

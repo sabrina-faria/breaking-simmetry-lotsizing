@@ -146,7 +146,15 @@ def constraint_setup_max_um_item(mdl: Model, data: dataCS) -> Model:
         for t in range(1, data.nperiodos)
     )
     return mdl
-    
+
+def constraint_simetria_do_crossover(mdl: Model, data: dataCS) -> Model:
+    for j in range(data.r):
+        for t in range(1,data.nperiodos):
+            mdl.add_constraint(mdl.v[1,j,t-1] == mdl.y[1,j,t])
+
+            for i in range(1,data.nitems):
+                    mdl.add_constraint(mdl.v[i,j,t-1] >= mdl.y[i,j,t] - mdl.sum(mdl.y[u,j,t] for u in range(i)))
+    return mdl
 
 def valor_funcao_obj(mdl: Model, data: dataCS) -> Model:
     return sum(
@@ -222,6 +230,7 @@ def build_model(data: dataCS, capacity: float) -> Model:
     mdl = constraint_tempo_emprestado_crossover(mdl, data)
     mdl = constraint_proibe_crossover_sem_setup(mdl, data)
     mdl = constraint_setup_max_um_item(mdl, data)
+    mdl = constraint_simetria_do_crossover(mdl, data)
 
     mdl.add_kpi(total_setup_cost(mdl, data), "total_setup_cost")
     mdl.add_kpi(total_estoque_cost(mdl, data), "total_estoque_cost")
