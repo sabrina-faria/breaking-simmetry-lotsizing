@@ -11,4 +11,4 @@ module load mpich/4.1.1-gcc-9.4.0
 source newmpi/bin/activate
 
 cd $PBS_O_WORKDIR
-mpirun -np 144 python -m mpi4py.futures main.py
+mpirun python -m mpi4py.futures main.py
