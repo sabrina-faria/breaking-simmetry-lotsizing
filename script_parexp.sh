@@ -7,8 +7,8 @@
 #PBS -M s209376@dac.unicamp.br
 
 module load anaconda3
-module load mpich/4.1.1-gcc-9.4.0
+module load mpich/3.1.3-gcc-9.4.0
 source newmpi/bin/activate
 
 cd $PBS_O_WORKDIR
-mpirun python -m mpi4py.futures main.py
+mpirun -np 144 python -m mpi4py.futures main.py
