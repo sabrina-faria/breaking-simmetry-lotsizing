@@ -122,11 +122,13 @@ def constraint_setup(mdl: Model, data: dataCS) -> Model:
 def constraint_split_time(mdl: Model, data: dataCS) -> Model:
     for i in range(data.nitems):
         for j in range(data.r):
-            for t in range(1,data.nperiodos):
-                mdl.add_constraint(
-                    mdl.f[i, j, t] + mdl.l[i,j,t-1] == mdl.w[i, j, t] * data.st[i]
-        
-    )
+            for t in range(data.nperiodos):
+                if t == 0:
+                    mdl.add_constraint(
+                    mdl.f[i, j, t] == mdl.w[i, j, t] * data.st[i])
+                else:
+                    mdl.add_constraint(
+                    mdl.f[i, j, t] + mdl.l[i,j,t-1] == mdl.w[i, j, t] * data.st[i])
     return mdl
 
 def constraint_split_max(mdl: Model, data: dataCS) -> Model:
@@ -137,21 +139,21 @@ def constraint_split_max(mdl: Model, data: dataCS) -> Model:
     )
     return mdl
 
-def constraint_variavel_w(mdl: Model, data: dataCS) -> Model:
-    mdl.add_constraints(
-        mdl.w[i,j,0] == 0
-        for j in range(data.r)
-        for i in range(data.nitems)
-    )
-    return mdl
+# def constraint_variavel_w(mdl: Model, data: dataCS) -> Model:
+#     mdl.add_constraints(
+#         mdl.w[i,j,0] == 0
+#         for j in range(data.r)
+#         for i in range(data.nitems)
+#     )
+#     return mdl
 
-def constraint_variavel_f(mdl: Model, data: dataCS) -> Model:
-    mdl.add_constraints(
-        mdl.f[i,j,0] == 0
-        for j in range(data.r)
-        for i in range(data.nitems)
-    )
-    return mdl
+# def constraint_variavel_f(mdl: Model, data: dataCS) -> Model:
+#     mdl.add_constraints(
+#         mdl.f[i,j,0] == 0
+#         for j in range(data.r)
+#         for i in range(data.nitems)
+#     )
+#     return mdl
 
 
 def total_setup_cost(mdl, data):
@@ -221,8 +223,8 @@ def build_model(data: dataCS, capacity: float) -> Model:
     mdl = constraint_setup(mdl, data)
     mdl = constraint_split_time(mdl, data)
     mdl = constraint_split_max(mdl, data)
-    mdl = constraint_variavel_w(mdl, data)
-    mdl = constraint_variavel_f(mdl, data)
+    # mdl = constraint_variavel_w(mdl, data)
+    # mdl = constraint_variavel_f(mdl, data)
     mdl.add_kpi(total_setup_cost(mdl, data), "total_setup_cost")
     mdl.add_kpi(total_estoque_cost(mdl, data), "total_estoque_cost")
     mdl.add_kpi(used_capacity(mdl, data), "used_capacity")
