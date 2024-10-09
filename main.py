@@ -11,101 +11,37 @@ from fourth_formulation import build_model as fourth_formulation_build_model
 from fifth_formulation import build_model as fifth_formulation_build_model
 from sixth_formulation import build_model as sixth_formulation_build_model
 from seventh_formulation import build_model as seventh_formulation_build_model
-from eigth_formulation import build_model as eigth_formulation_build_model
-from ninth_formulation import build_model as ninth_formulation_build_model
-from tenth_formulation import build_model as tenth_formulation_build_model
-from eleventh_formulation import build_model as eleventh_formulation_build_model
-from twelfth_formulation import build_model as twelfth_formulation_build_model
-from thirteenth_formulation import build_model as thirteenth_formulation_build_model
 
 if __name__ == "__main__":
-    for num in [1]:
-        context = ProjectContext(f"experimentos/experimento1.yml", 1)
-        # running_all_instance_choose_capacity(
-        #     context,
-        #     classical_formulation_build_model,
-        # )
-    running_all_instance_with_chosen_capacity(
-        context,
-        classical_formulation_build_model,
-        path_to_save="otimizados_0_experiment_1.xlsx",
-        env_formulation="0_ref",
-    )
-    # running_all_instance_with_chosen_capacity(
-    #     context,
-    #     first_formulation_build_model,
-    #     path_to_save=f"otimizados_1_experiment_1.xlsx",
-    #     env_formulation="1_ref",
-    # )
-    # running_all_instance_with_chosen_capacity(
-    #     context,
-    #     second_formulation_build_model,
-    #     path_to_save=f"otimizados_2_experiment_1.xlsx",
-    #     env_formulation="2_ref",
-    # )
-    # running_all_instance_with_chosen_capacity(
-    #     context,
-    #     third_formulation_build_model,
-    #     path_to_save=f"otimizados_3_experiment_1.xlsx",
-    #     env_formulation="3_ref",
-    # )
-    # running_all_instance_with_chosen_capacity(
-    #     context,
-    #     fourth_formulation_build_model,
-    #     path_to_save="otimizados_4_experiment_1.xlsx",
-    #     env_formulation="4_ref",
-    # )
-    # running_all_instance_with_chosen_capacity(
-    #     context,
-    #     fifth_formulation_build_model,
-    #     path_to_save="otimizados_5_experiment_1.xlsx",
-    #     env_formulation="5_ref",
-    # )
-    # running_all_instance_with_chosen_capacity(
-    #     context,
-    #     sixth_formulation_build_model,
-    #     path_to_save="otimizados_6_experiment_1.xlsx",
-    #     env_formulation="6_ref",
-    # )
-    # running_all_instance_with_chosen_capacity(
-    #     context,
-    #     seventh_formulation_build_model,
-    #     path_to_save="otimizados_7_experiment_1.xlsx",
-    #     env_formulation="7_ref",
-    # )
-    # running_all_instance_with_chosen_capacity(
-    #     context,
-    #     eigth_formulation_build_model,
-    #     path_to_save="otimizados_8_experiment_1.xlsx",
-    #     env_formulation="8_ref",
-    # )
-    # running_all_instance_with_chosen_capacity(
-    #     context,
-    #     ninth_formulation_build_model,
-    #     path_to_save="otimizados_9_experiment_1.xlsx",
-    #     env_formulation="9_ref",
-    # )
-    # running_all_instance_with_chosen_capacity(
-    #     context,
-    #     tenth_formulation_build_model,
-    #     path_to_save="otimizados_10_experiment_1.xlsx",
-    #     env_formulation="10_ref",
-    # )
-    # running_all_instance_with_chosen_capacity(
-    #     context,
-    #     eleventh_formulation_build_model,
-    #     path_to_save="otimizados_11_experiment_1.xlsx",
-    #     env_formulation="11_ref",
-    # )
-    # running_all_instance_with_chosen_capacity(
-    #     context,
-    #     twelfth_formulation_build_model,
-    #     path_to_save="otimizados_12_experiment_1.xlsx",
-    #     env_formulation="12_ref",
-    # )
-    running_all_instance_with_chosen_capacity(
-        context,
-        thirteenth_formulation_build_model,
-        path_to_save="otimizados_13_experiment_1.xlsx",
-        env_formulation="13_ref",
-    )
+    # Mapeamento de números para formulações e seus respectivos modelos
+    formulations = {
+        0: ("0_ref", classical_formulation_build_model),
+        1: ("1_ref", first_formulation_build_model),
+        2: ("2_ref", second_formulation_build_model),
+        3: ("3_ref", third_formulation_build_model),
+        4: ("4_ref", fourth_formulation_build_model),
+        5: ("5_ref", fifth_formulation_build_model),
+        6: ("6_ref", sixth_formulation_build_model),
+        7: ("7_ref", seventh_formulation_build_model),
+    }
+
+    # Defina quais formulações deseja rodar usando números
+    formulations_to_run = [0]  # Altere essa lista conforme necessário
+
+    for num in [0,1,2,3,4,5,6,7]:
+        context = ProjectContext(f"experimentos/experimento{num}.yml", num)
+
+        for formulation_number in formulations_to_run:
+            if formulation_number in formulations:
+                env_formulation, build_model = formulations[formulation_number]
+                # Ajuste o path_to_save para incluir o número do experimento e a formulação
+                path_to_save = f"otimizados_{formulation_number}_experiment_{num}.xlsx"
+
+                running_all_instance_with_chosen_capacity(
+                    context,
+                    build_model,
+                    path_to_save=path_to_save,
+                    env_formulation=env_formulation,
+                )
+            else:
+                print(f"Formulação {formulation_number} não encontrada.")
