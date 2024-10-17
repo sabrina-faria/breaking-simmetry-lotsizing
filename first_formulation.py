@@ -144,14 +144,6 @@ def constraint_idle_period(mdl: Model, data: dataCS) -> Model:
                     mdl.add_constraint(mdl.y[i, j, t] + mdl.Q[j, t] <= 1)
     return mdl
 
-def constraint_simetria_do_máquinas(mdl: Model, data: dataCS) -> Model:
-    for i in range(data.nitems):
-        for j in range(1, data.r):
-                mdl.add_constraint(
-                    mdl.sum(2 ** (i - k) * mdl.y[k, j - 1, 0] for k in range(i + 1))
-                    >= mdl.sum(2 ** (i - k) * mdl.y[k, j, 0] for k in range(i + 1))
-                )
-    return mdl
 
 def total_setup_cost(mdl, data):
     return sum(
@@ -195,6 +187,14 @@ def total_y(mdl, data):
         for t in range(data.nperiodos)
     )
 
+def total_carryover(mdl, data):
+    return sum(
+        mdl.z[i, j, t]
+        for i in range(data.nitems)
+        for j in range(data.r)
+        for t in range(data.nperiodos)
+    )
+
 
 def add_new_kpi(kpis: Dict[str, any], result, data: dataCS) -> dict:
     kpis["Instance"] = data.instance
@@ -222,10 +222,10 @@ def build_model(data: dataCS, capacity: float) -> Model:
     mdl = constraint_proibe_carryover_sem_setup(mdl, data)
     mdl = constraint_carryover_for_two_periods(mdl, data)
     mdl = constraint_idle_period(mdl, data)
-    mdl = constraint_simetria_do_máquinas(mdl, data)
 
     mdl.add_kpi(total_setup_cost(mdl, data), "total_setup_cost")
     mdl.add_kpi(total_estoque_cost(mdl, data), "total_estoque_cost")
     mdl.add_kpi(used_capacity(mdl, data), "used_capacity")
     mdl.add_kpi(total_y(mdl, data), "total_y")
+    mdl.add_kpi(total_carryover(mdl, data), "total_carryover")
     return mdl, data

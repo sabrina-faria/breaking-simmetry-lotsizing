@@ -26,28 +26,6 @@ def create_variables(mdl: Model, data: dataCS) -> Model:
         lb=0,
         name=f"x",
     )
-
-    mdl.z = mdl.binary_var_dict(
-        (
-            (i, j, t)
-            for i in range(data.nitems)
-            for j in range(data.r)
-            for t in range(data.nperiodos)
-        ),
-        lb=0,
-        ub=1,
-        name=f"z",
-    )
-
-    mdl.Q = mdl.binary_var_dict(
-        ((j, t)
-        for j in range(data.r)
-        for t in range(data.nperiodos)),
-        lb=0,
-        ub=1,
-        name=f"Q",
-    )
-
     return mdl
 
 
@@ -99,49 +77,13 @@ def constraint_capacity(mdl: Model, data: dataCS) -> Model:
 
 
 def constraint_setup(mdl: Model, data: dataCS) -> Model:
-    for i in range(data.nitems):
-        for j in range(data.r):
-            for t in range(data.nperiodos):
-                for k in range(t, data.nperiodos):
-                    if t == 0:
-                       mdl.add_constraint(mdl.x[i, j, t, k] <= mdl.y[i, j, t]) 
-                    else:
-                        mdl.add_constraint(mdl.x[i, j, t, k] <= mdl.y[i, j, t] + mdl.z[i,j,t-1])
-    return mdl
-
-def constraint_setup_max_um_item(mdl: Model, data: dataCS) -> Model:
     mdl.add_constraints(
-        mdl.sum(mdl.z[i, j, t - 1] for i in range(data.nitems)) <= 1
+        mdl.x[i, j, t, k] <= mdl.y[i, j, t]
+        for i in range(data.nitems)
         for j in range(data.r)
-        for t in range(1, data.nperiodos)
+        for t in range(data.nperiodos)
+        for k in range(t, data.nperiodos)
     )
-    return mdl
-
-def constraint_proibe_carryover_sem_setup(mdl: Model, data: dataCS) -> Model:
-    for i in range(data.nitems):
-        for j in range(data.r):
-            for t in range(data.nperiodos):
-                if t == 0:
-                    mdl.add_constraint(mdl.z[i, j, t] <= mdl.y[i, j, t])
-                else:
-                    mdl.add_constraint(mdl.z[i, j, t] <= mdl.z[i,j,t-1] + mdl.y[i, j, t])
-    return mdl
-
-def constraint_carryover_for_two_periods(mdl: Model, data: dataCS) -> Model:
-    for i in range(data.nitems):
-        for j in range(data.r):
-            for t in range(data.nperiodos):
-                if t == 0:
-                    mdl.add_constraint(mdl.z[i, j, t] <= 1 + mdl.Q[j, t])
-                else:
-                    mdl.add_constraint(mdl.z[i, j, t] + mdl.z[i, j, t-1] <= 1 + mdl.Q[j, t])
-    return mdl
-
-def constraint_idle_period(mdl: Model, data: dataCS) -> Model:
-    for i in range(data.nitems):
-        for j in range(data.r):
-            for t in range(data.nperiodos):
-                    mdl.add_constraint(mdl.y[i, j, t] + mdl.Q[j, t] <= 1)
     return mdl
 
 
@@ -187,14 +129,6 @@ def total_y(mdl, data):
         for t in range(data.nperiodos)
     )
 
-def total_carryover(mdl, data):
-    return sum(
-        mdl.z[i, j, t]
-        for i in range(data.nitems)
-        for j in range(data.r)
-        for t in range(data.nperiodos)
-    )
-
 
 def add_new_kpi(kpis: Dict[str, any], result, data: dataCS) -> dict:
     kpis["Instance"] = data.instance
@@ -218,14 +152,8 @@ def build_model(data: dataCS, capacity: float) -> Model:
     mdl = constraint_demanda_satisfeita(mdl, data)
     mdl = constraint_capacity(mdl, data)
     mdl = constraint_setup(mdl, data)
-    mdl = constraint_setup_max_um_item(mdl, data)
-    mdl = constraint_proibe_carryover_sem_setup(mdl, data)
-    mdl = constraint_carryover_for_two_periods(mdl, data)
-    mdl = constraint_idle_period(mdl, data)
-
     mdl.add_kpi(total_setup_cost(mdl, data), "total_setup_cost")
     mdl.add_kpi(total_estoque_cost(mdl, data), "total_estoque_cost")
     mdl.add_kpi(used_capacity(mdl, data), "used_capacity")
     mdl.add_kpi(total_y(mdl, data), "total_y")
-    mdl.add_kpi(total_carryover(mdl, data), "total_carryover")
     return mdl, data

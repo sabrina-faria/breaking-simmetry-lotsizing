@@ -2,7 +2,6 @@ from typing import Dict
 from docplex.mp.model import Model
 
 from read_file import dataCS
-from utils import cs_aux
 
 def create_variables(mdl: Model, data: dataCS) -> Model:
     mdl.y = mdl.binary_var_dict(
@@ -49,6 +48,13 @@ def create_variables(mdl: Model, data: dataCS) -> Model:
         name=f"Q",
     )
 
+    mdl.w = mdl.binary_var_dict(
+        data.nperiodos,
+        lb=0,
+        ub=1,
+        name=f"w",
+    )
+
     return mdl
 
 
@@ -59,7 +65,7 @@ def define_obj_function(mdl: Model, data: dataCS) -> Model:
         for j in range(data.r)
         for t in range(data.nperiodos)
     ) + sum(
-        cs_aux(data)[i, j, t, k] * mdl.x[i, j, t, k]
+        data.cs[i, t, k] * mdl.x[i, j, t, k]
         for i in range(data.nitems)
         for j in range(data.r)
         for t in range(data.nperiodos)
@@ -145,6 +151,16 @@ def constraint_idle_period(mdl: Model, data: dataCS) -> Model:
                     mdl.add_constraint(mdl.y[i, j, t] + mdl.Q[j, t] <= 1)
     return mdl
 
+def constraint_condicional(mdl: Model, data: dataCS) -> Model:
+    for t in range(data.nperiodos):
+        for j in range(1,data.r):
+            if t ==0:
+                mdl.add_constraint(mdl.y[0,j-1,t] >= mdl.y[0,j,t] - 1000000*(1 - mdl.w[t]))
+            else:
+                mdl.add_constraint(mdl.sum(mdl.z[i, j, t-1] for i in range(data.nitems) for j in range(data.r)) >= 1 - 1000000*mdl.w[t])
+                mdl.add_constraint(mdl.sum(mdl.z[i, j, t-1] for i in range(data.nitems) for j in range(data.r)) <= 1000000*(1 - mdl.w[t]))
+                mdl.add_constraint(mdl.y[0,j-1,t] >= mdl.y[0,j,t] - 1000000*(1 - mdl.w[t]))
+    return mdl
 
 def total_setup_cost(mdl, data):
     return sum(
@@ -215,6 +231,7 @@ def build_model(data: dataCS, capacity: float) -> Model:
     mdl = constraint_proibe_carryover_sem_setup(mdl, data)
     mdl = constraint_carryover_for_two_periods(mdl, data)
     mdl = constraint_idle_period(mdl, data)
+    mdl = constraint_condicional(mdl, data)
 
     mdl.add_kpi(total_setup_cost(mdl, data), "total_setup_cost")
     mdl.add_kpi(total_estoque_cost(mdl, data), "total_estoque_cost")

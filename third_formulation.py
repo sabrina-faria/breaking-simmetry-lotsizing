@@ -48,13 +48,6 @@ def create_variables(mdl: Model, data: dataCS) -> Model:
         name=f"Q",
     )
 
-    mdl.w = mdl.binary_var_dict(
-        data.nperiodos,
-        lb=0,
-        ub=1,
-        name=f"w",
-    )
-
     return mdl
 
 
@@ -151,16 +144,10 @@ def constraint_idle_period(mdl: Model, data: dataCS) -> Model:
                     mdl.add_constraint(mdl.y[i, j, t] + mdl.Q[j, t] <= 1)
     return mdl
 
-def constraint_condicional(mdl: Model, data: dataCS) -> Model:
-    for t in range(data.nperiodos):
-        for j in range(1,data.r):
-            for i in range(data.nitems):
-                if t ==0:
-                    mdl.add_constraint(mdl.sum(2**(i-k) * mdl.y[k,j-1,0] for k in range(i+1)) >= mdl.sum(2**(i-k) * mdl.y[k,j,0] for k in range(i+1)))
-                else:
-                    mdl.add_constraint(mdl.sum(mdl.z[i, j, t-1] for i in range(data.nitems) for j in range(data.r)) >= 1 - 1000000*mdl.w[t])
-                    mdl.add_constraint(mdl.sum(mdl.z[i, j, t-1] for i in range(data.nitems) for j in range(data.r)) <= 1000000*(1 - mdl.w[t]))
-                    mdl.add_constraint(mdl.sum(2**(i-k) * mdl.y[k,j-1,t] for k in range(i+1)) >= mdl.sum(2**(i-k) * mdl.y[k,j,t] for k in range(i+1)) - 1000000*(1 - mdl.w[t]))
+def constraint_simetria_do_máquinas(mdl: Model, data: dataCS) -> Model:
+    for j in range(1, data.r):
+        mdl.add_constraint(mdl.sum(2 ** (data.nitems - i) * mdl.y[i, j - 1, 0] for i in range(data.nitems))
+                >= mdl.sum(2 ** (data.nitems - i) * mdl.y[i, j, 0] for i in range(data.nitems)))
     return mdl
 
 def total_setup_cost(mdl, data):
@@ -232,7 +219,7 @@ def build_model(data: dataCS, capacity: float) -> Model:
     mdl = constraint_proibe_carryover_sem_setup(mdl, data)
     mdl = constraint_carryover_for_two_periods(mdl, data)
     mdl = constraint_idle_period(mdl, data)
-    mdl = constraint_condicional(mdl, data)
+    mdl = constraint_simetria_do_máquinas(mdl, data)
 
     mdl.add_kpi(total_setup_cost(mdl, data), "total_setup_cost")
     mdl.add_kpi(total_estoque_cost(mdl, data), "total_estoque_cost")
