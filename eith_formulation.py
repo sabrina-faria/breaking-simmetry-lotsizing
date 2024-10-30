@@ -191,6 +191,14 @@ def total_y(mdl, data):
         for t in range(data.nperiodos)
     )
 
+def total_carryover(mdl, data):
+    return sum(
+        mdl.z[i, j, t]
+        for i in range(data.nitems)
+        for j in range(data.r)
+        for t in range(data.nperiodos)
+    )
+
 
 def add_new_kpi(kpis: Dict[str, any], result, data: dataCS) -> dict:
     kpis["Instance"] = data.instance
@@ -224,4 +232,5 @@ def build_model(data: dataCS, capacity: float) -> Model:
     mdl.add_kpi(total_estoque_cost(mdl, data), "total_estoque_cost")
     mdl.add_kpi(used_capacity(mdl, data), "used_capacity")
     mdl.add_kpi(total_y(mdl, data), "total_y")
+    mdl.add_kpi(total_carryover(mdl, data), "total_carryover")
     return mdl, data
