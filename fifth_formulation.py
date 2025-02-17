@@ -26,6 +26,14 @@ def create_variables(mdl: Model, data: dataCS) -> Model:
         ub=1,
         name=f"w",
     )
+    mdl.e = mdl.continuous_var_dict(
+        (
+            (t)
+            for t in range(data.nperiodos)
+        ),
+        lb=0,
+        name=f"e",
+    )
     mdl.x = mdl.continuous_var_dict(
         (
             (i, j, t, k)
@@ -122,11 +130,13 @@ def constraint_setup(mdl: Model, data: dataCS) -> Model:
 def constraint_split_time(mdl: Model, data: dataCS) -> Model:
     for i in range(data.nitems):
         for j in range(data.r):
-            for t in range(1,data.nperiodos):
-                mdl.add_constraint(
-                    mdl.f[i, j, t] + mdl.l[i,j,t-1] == mdl.w[i, j, t] * data.st[i]
-        
-    )
+            for t in range(data.nperiodos):
+                if t == 0:
+                    mdl.add_constraint(
+                    mdl.f[i, j, t] == mdl.w[i, j, t] * data.st[i])
+                else:
+                    mdl.add_constraint(
+                    mdl.f[i, j, t] + mdl.l[i,j,t-1] == mdl.w[i, j, t] * data.st[i])
     return mdl
 
 def constraint_split_max(mdl: Model, data: dataCS) -> Model:
@@ -137,10 +147,18 @@ def constraint_split_max(mdl: Model, data: dataCS) -> Model:
     )
     return mdl
 
+def constraint_conditional(mdl: Model, data: dataCS) -> Model:
+    mdl.add_constraints(
+        mdl.sum(mdl.w[i, j, t] for i in range(data.nitems) for j in range(data.r)) >= 1 - 1000000*mdl.e[t]
+        for t in range(data.nperiodos))
+    mdl.add_constraints(
+        mdl.sum(mdl.w[i, j, t] for i in range(data.nitems) for j in range(data.r)) <= 1000000*(1 - mdl.e[t])
+        for t in range(data.nperiodos))
+    return mdl
 def constraint_symmetry_breaking(mdl: Model, data: dataCS) -> Model:
     mdl.add_constraints(
-        mdl.sum(2**(i-u)*(mdl.x[u,j-1,0,0]) for u in range(i+1)) <= 
-        mdl.sum(2**(i-u)*(mdl.x[u,j,0,0]) for u in range(i+1))
+        mdl.sum(2**(i-u)*(mdl.z[u,j-1,t]) for u in range(i+1)) >= mdl.sum(2**(i-u)*(mdl.z[u,j,t]) for u in range(i+1)) - 1000000*(1 - mdl.e[t])
+        for t in range(data.nperiodos)
         for i in range(data.nitems)
         for j in range(1,data.r)
     )
@@ -229,6 +247,7 @@ def build_model(data: dataCS, capacity: float) -> Model:
     mdl = constraint_setup(mdl, data)
     mdl = constraint_split_time(mdl, data)
     mdl = constraint_split_max(mdl, data)
+    mdl = constraint_conditional(mdl, data)
     mdl = constraint_symmetry_breaking(mdl, data)
     mdl = constraint_variavel_w(mdl, data)
     mdl = constraint_variavel_f(mdl, data)
