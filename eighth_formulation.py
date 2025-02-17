@@ -26,6 +26,14 @@ def create_variables(mdl: Model, data: dataCS) -> Model:
         ub=1,
         name=f"w",
     )
+    mdl.e = mdl.continuous_var_dict(
+        (
+            (t)
+            for t in range(data.nperiodos)
+        ),
+        lb=0,
+        name=f"e",
+    )
     mdl.x = mdl.continuous_var_dict(
         (
             (i, j, t, k)
