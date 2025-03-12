@@ -8,7 +8,7 @@ from pathlib import Path
 #      for l in range(1, 3) for m in range(7, 10) for n in ["A", "B", "C", "D", "E"]])
 
 
-INSTANCES = ["F70.DAT"
+INSTANCES = ["F70.DAT", "F10.DAT"
 #               "X11117A.DAT"
 ]
 MAQUINAS = [2,4,6]
