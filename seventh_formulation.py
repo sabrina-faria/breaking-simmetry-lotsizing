@@ -52,6 +52,12 @@ def create_variables(mdl: Model, data: dataCS) -> Model:
         ub=1,
         name=f"x",
     )
+    mdl.w = mdl.binary_var_dict(
+        data.nperiodos,
+        lb=0,
+        ub=1,
+        name=f"w",
+    )
     return mdl
 
 
@@ -172,6 +178,12 @@ def constraint_crossover_by_need(mdl: Model, data: dataCS) -> Model:
             mdl.add_constraint(mdl.e[j, t + 1] <= (1 - mdl.z[j, t]) * data.cap[0])
     return mdl
 
+def constraint_simetria_do_máquinas_nova(mdl: Model, data: dataCS) -> Model:
+    for j in range(1, data.r):
+        mdl.add_constraint(
+            mdl.y[0, j - 1, 0] >= mdl.y[0, j, 0] )
+    return mdl
+
 
 def total_setup_cost(mdl, data):
     return sum(
@@ -235,6 +247,7 @@ def build_model(data: dataCS, capacity: float) -> Model:
     mdl = constraint_setup_max_um_item(mdl, data)
     mdl = constraint_crossover_by_machine(mdl, data)
     mdl = constraint_crossover_by_need(mdl, data)
+    mdl = constraint_simetria_do_máquinas_nova(mdl, data)
 
     mdl.add_kpi(total_setup_cost(mdl, data), "total_setup_cost")
     mdl.add_kpi(total_estoque_cost(mdl, data), "total_estoque_cost")

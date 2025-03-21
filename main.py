@@ -8,7 +8,11 @@ from first_formulation import build_model as first_formulation_build_model
 from second_formulation import build_model as second_formulation_build_model
 from third_formulation import build_model as third_formulation_build_model
 from fourth_formulation import build_model as fourth_reformulation_build_model
-
+from fifth_formulation import build_model as fifth_formulation_build_model
+from sixth_formulation import build_model as sixth_formulation_build_model
+from seventh_formulation import build_model as seventh_formulation_build_model
+from eigth_formulation import build_model as eigth_formulation_build_model
+from ninth_formulation import build_model as ninth_formulation_build_model
 if __name__ == "__main__":
     # for num in [1]:
     context = ProjectContext(f"experimentos/experimento1.yml", 1)
@@ -44,4 +48,34 @@ if __name__ == "__main__":
         fourth_reformulation_build_model,
         path_to_save="otimizados_4_experiment_1.xlsx",
         env_formulation="4_ref",
+    )
+    running_all_instance_with_chosen_capacity(
+        context,
+        fifth_formulation_build_model,
+        path_to_save="otimizados_5_experiment_1.xlsx",
+        env_formulation="5_ref",
+    )
+    running_all_instance_with_chosen_capacity(
+        context,
+        sixth_formulation_build_model,
+        path_to_save="otimizados_6_experiment_1.xlsx",
+        env_formulation="6_ref",
+    )
+    running_all_instance_with_chosen_capacity(
+        context,
+        seventh_formulation_build_model,
+        path_to_save="otimizados_7_experiment_1.xlsx",
+        env_formulation="7_ref",
+    )
+    running_all_instance_with_chosen_capacity(
+        context,
+        eigth_formulation_build_model,
+        path_to_save="otimizados_8_experiment_1.xlsx",
+        env_formulation="8_ref",
+    )
+    running_all_instance_with_chosen_capacity(
+        context,
+        ninth_formulation_build_model,
+        path_to_save="otimizados_9_experiment_1.xlsx",
+        env_formulation="9_ref",
     )

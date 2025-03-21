@@ -28,12 +28,6 @@ def create_variables(mdl: Model, data: dataCS) -> Model:
         ub=1,
         name=f"v",
     )
-    mdl.z = mdl.binary_var_dict(
-        ((j, t) for j in range(data.r) for t in range(data.nperiodos)),
-        lb=0,
-        ub=1,
-        name=f"z",
-    )  # existe ou não crossover na máquina j no período t
     mdl.u = mdl.continuous_var_dict(
         ((j, t) for j in range(data.r) for t in range(data.nperiodos)), lb=0, name=f"u"
     )  # tempo extra emprestado para o setup t + 1
@@ -102,7 +96,6 @@ def constraint_capacity(mdl: Model, data: dataCS) -> Model:
                     == data.cap[0] + mdl.u[j, t - 1],
                     ctname="capacity",
                 )
-
             else:
                 mdl.add_constraint(
                     mdl.sum(data.st[i] * mdl.y[i, j, t] for i in range(data.nitems))
@@ -157,21 +150,24 @@ def constraint_setup_max_um_item(mdl: Model, data: dataCS) -> Model:
     return mdl
 
 
-def constraint_crossover_by_machine(mdl: Model, data: dataCS) -> Model:
-    for j in range(data.r):
-        for t in range(data.nperiodos):
-            mdl.add_constraint(
-                mdl.sum(mdl.v[i, j, t] for i in range(data.nitems)) == mdl.z[j, t]
-            )
-    return mdl
-
-
 def constraint_crossover_by_need(mdl: Model, data: dataCS) -> Model:
-    for j in range(data.r):
-        for t in range(data.nperiodos - 1):
-            mdl.add_constraint(mdl.e[j, t + 1] <= (1 - mdl.z[j, t]) * data.cap[0])
+    for i in range(data.nitems):
+        for j in range(data.r):
+            for t in range(data.nperiodos - 1):
+                mdl.add_constraint(
+                    mdl.e[j, t + 1] <= (1 - mdl.v[i, j, t]) * data.cap[0]
+                )
     return mdl
 
+def constraint_simetria_do_máquinas_nova(mdl: Model, data: dataCS) -> Model:
+    for i in range(data.nitems):
+        for j in range(1, data.r):
+            for t in range(data.nperiodos):
+                mdl.add_constraint(
+                    mdl.sum(2 ** (i - k) * mdl.y[k, j - 1, 0] for k in range(i + 1))
+                    >= mdl.sum(2 ** (i - k) * mdl.y[k, j, 0] for k in range(i + 1))
+                )
+    return mdl
 
 def total_setup_cost(mdl, data):
     return sum(
@@ -233,13 +229,11 @@ def build_model(data: dataCS, capacity: float) -> Model:
     mdl = constraint_tempo_emprestado_crossover(mdl, data)
     mdl = constraint_proibe_crossover_sem_setup(mdl, data)
     mdl = constraint_setup_max_um_item(mdl, data)
-    mdl = constraint_crossover_by_machine(mdl, data)
     mdl = constraint_crossover_by_need(mdl, data)
+    mdl = constraint_simetria_do_máquinas_nova(mdl, data)
 
     mdl.add_kpi(total_setup_cost(mdl, data), "total_setup_cost")
     mdl.add_kpi(total_estoque_cost(mdl, data), "total_estoque_cost")
     mdl.add_kpi(used_capacity(mdl, data), "used_capacity")
     mdl.add_kpi(total_y(mdl, data), "total_y")
-    # mdl.add_kpi(relaxacao_linear(data), "relaxacao_linear")
     return mdl, data
-
