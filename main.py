@@ -31,9 +31,9 @@ if __name__ == "__main__":
     }
 
     # Defina quais formulações deseja rodar usando números
-    formulations_to_run = [1,2,6]  # Altere essa lista conforme necessário
+    formulations_to_run = range(10)  # Altere essa lista conforme necessário
 
-    for num in [5,6,7,8,9,10]:
+    for num in [1]:
         context = ProjectContext(f"experimentos/experimento{num}.yml", num)
 
         for formulation_number in formulations_to_run:
