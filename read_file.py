@@ -37,12 +37,12 @@ class LerDados:
         self.nperiodos = int(df.iloc[0, 1])
         inicio = 2
         fim = inicio + 1
-        self.cap = np.array(df.iloc[inicio:fim, 0].astype(float), dtype=int)
+        self.cap = np.array(df.iloc[inicio:fim, 0], dtype=float)
         inicio, fim = fim, fim + self.nitems
-        self.vt = np.array(df.iloc[inicio:fim, 0].astype(float), dtype=int)
-        self.hc = context.custo_estoque * np.array(df.iloc[inicio:fim, 1].astype(float), dtype=int)
-        self.st = np.array(df.iloc[inicio:fim, 2].astype(float), dtype=int)
-        self.sc = context.custo_setup * np.array(df.iloc[inicio:fim, 3].astype(float), dtype=int)
+        self.vt = np.array(df.iloc[inicio:fim, 0], dtype=float)
+        self.hc = context.custo_estoque * np.array(df.iloc[inicio:fim, 1], dtype=float)
+        self.st = np.array(df.iloc[inicio:fim, 2], dtype=float)
+        self.sc = context.custo_setup * np.array(df.iloc[inicio:fim, 3], dtype=float)
         inicio, fim = fim, fim + self.nperiodos
         if self.nitems <= 15:
             self._d_no_sorted = np.array(df.iloc[inicio:fim, :].astype(float), dtype=int).T
@@ -58,6 +58,7 @@ class LerDados:
             )
             self._d_no_sorted = np.append(demanda_sup, demanda_inf, axis=1).T
         self._sort_index()
+        
 
     def _sort_index(self):
         sorted_indices = sorted(range(len(self.st)), key=lambda i: self.st[i], reverse=True)
