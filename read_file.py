@@ -24,7 +24,7 @@ class LerDados:
         self.instance = instance
         self._instance = Path.resolve(Path.cwd() / "540data" / instance)
         if not Path.exists(self._instance):
-            print(f"{self.instance} NÃO EXISTE")
+            print(f"{self.instance} NÃO EXISTE")        
         sep = self._detect_delimiter()
         column_names = self._generate_cols(sep=sep)
         df = pd.read_csv(
@@ -39,12 +39,12 @@ class LerDados:
         self.nperiodos = int(df.iloc[0, 1])
         inicio = 2
         fim = inicio + 1
-        self.cap = np.array(df.iloc[inicio:fim, 0].astype(float), dtype=int)
+        self.cap = np.array(df.iloc[inicio:fim, 0], dtype=float)
         inicio, fim = fim, fim + self.nitems
-        self.vt = np.array(df.iloc[inicio:fim, 0].astype(float), dtype=int)
-        self.hc = context.custo_estoque * np.array(df.iloc[inicio:fim, 1].astype(float), dtype=float)
-        self.st = np.array(df.iloc[inicio:fim, 2].astype(float), dtype=int)
-        self.sc = context.custo_setup * np.array(df.iloc[inicio:fim, 3].astype(float), dtype=float)
+        self.vt = np.array(df.iloc[inicio:fim, 0], dtype=float)
+        self.hc = context.custo_estoque * np.array(df.iloc[inicio:fim, 1], dtype=float)
+        self.st = np.array(df.iloc[inicio:fim, 2], dtype=float)
+        self.sc = context.custo_setup * np.array(df.iloc[inicio:fim, 3], dtype=float)
         inicio, fim = fim, fim + self.nperiodos
         if self.nitems <= 15:
             self._d_no_sorted = np.array(df.iloc[inicio:fim, :].astype(float), dtype=int).T
@@ -63,6 +63,7 @@ class LerDados:
             self._sort_index()
         else:
             self.d = self._d_no_sorted
+        
 
     def _sort_index(self):
         sorted_indices = sorted(range(len(self.st)), key=lambda i: self.st[i], reverse=True)
@@ -97,8 +98,8 @@ class dataCS(LerDados):
     cs: Dict
     r: int
 
-    def __init__(self, context: ProjectContext, instance: str, r: int, original_capacity: bool = False, sort_index: bool = False):
-        super().__init__(context, instance, sort_index = sort_index)
+    def __init__(self, context: ProjectContext, instance: str, r: int, original_capacity: bool = False):
+        super().__init__(context, instance)
         self._create_vc_cs()
         self.r = r
         if not original_capacity:
@@ -132,9 +133,3 @@ class dataCS(LerDados):
         )
 
 
-if __name__ == "__main__":
-    context = ProjectContext(f"experimentos/experimento1.yml", 1)
-    ler = LerDados(context,"X11117A.dat", sort_index = True)
-    data = dataCS(context,"X11117A.dat", r=2)
-    pass
-    
