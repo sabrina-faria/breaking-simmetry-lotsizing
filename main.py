@@ -12,6 +12,7 @@ from fifth_formulation import build_model as fifth_formulation_build_model
 from sixth_formulation import build_model as sixth_formulation_build_model
 from seventh_formulation import build_model as seventh_formulation_build_model
 from eith_formulation import build_model as eight_formulation_build_model
+from ninth_formulation import build_model as ninth_formulation_build_model
 
 if __name__ == "__main__":
     # Mapeamento de números para formulações e seus respectivos modelos
@@ -25,12 +26,13 @@ if __name__ == "__main__":
         6: ("6_ref", sixth_formulation_build_model),
         7: ("7_ref", seventh_formulation_build_model),
         8: ("8_ref", eight_formulation_build_model),
+        9: ("9_ref", ninth_formulation_build_model),
     }
 
     # Defina quais formulações deseja rodar usando números
-    formulations_to_run = [0,1,2,3,4,5,6,7,8]  # Altere essa lista conforme necessário
+    formulations_to_run = [5,9]  # Altere essa lista conforme necessário
 
-    for num in [3,4,5,6,7,8,9,10]:
+    for num in [1]:
         context = ProjectContext(f"experimentos/experimento{num}.yml", num)
 
         for formulation_number in formulations_to_run:
