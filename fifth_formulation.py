@@ -155,7 +155,7 @@ def constraint_condicional(mdl: Model, data: dataCS) -> Model:
     for t in range(data.nperiodos):
         for j in range(1,data.r):
             if t ==0:
-                mdl.sum(2 ** (data.nitems - i) * mdl.y[i, j-1, 0] for i in range(data.nitems)>= mdl.sum(2 ** (data.nitems - i) * mdl.y[i, j, 0] for i in range(data.nitems)))
+                mdl.add_constraint(mdl.sum(2 ** (data.nitems - i) * mdl.y[i, j-1, 0] for i in range(data.nitems))>= mdl.sum(2 ** (data.nitems - i) * mdl.y[i, j, 0] for i in range(data.nitems)))
             else:
                 mdl.add_constraint(mdl.sum(mdl.z[i, j, t-1] for i in range(data.nitems) for j in range(data.r)) >= 1 - 1000000*mdl.w[t])
                 mdl.add_constraint(mdl.sum(mdl.z[i, j, t-1] for i in range(data.nitems) for j in range(data.r)) <= 1000000*(1 - mdl.w[t]))
