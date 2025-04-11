@@ -95,6 +95,7 @@ def choose_capacity(
     ):
         mdl, data = build_model(data, np.ceil(cap))
         mdl.parameters.timelimit = constants.FAST_TIMELIMIT
+        mdl.parameters.threads = 1
         result = mdl.solve()
 
         if result == None:
@@ -200,6 +201,7 @@ def solve_optimized_model(
     mdl, data = build_model(data, context.multiplicador_capacidade * capacity.get("capacity", 0))
     mdl.parameters.timelimit = constants.TIMELIMIT
     mdl.set_time_limit(constants.TIMELIMIT)
+    mdl.parameters.threads = 1
     result = mdl.solve()
 
     if result == None:
