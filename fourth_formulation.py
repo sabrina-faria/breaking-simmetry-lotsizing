@@ -24,6 +24,7 @@ def create_variables(mdl: Model, data: dataCS) -> Model:
             for k in range(data.nperiodos)
         ),
         lb=0,
+        ub=1,
         name=f"x",
     )
 
@@ -64,7 +65,7 @@ def define_obj_function(mdl: Model, data: dataCS) -> Model:
         for i in range(data.nitems)
         for j in range(data.r)
         for t in range(data.nperiodos)
-    ) + sum(
+    ) + mdl.sum(
         data.cs[i, t, k] * mdl.x[i, j, t, k]
         for i in range(data.nitems)
         for j in range(data.r)
@@ -78,11 +79,11 @@ def define_obj_function(mdl: Model, data: dataCS) -> Model:
 
 def constraint_demanda_satisfeita(mdl: Model, data: dataCS) -> Model:
     for i in range(data.nitems):
-        for t in range(data.nperiodos):
-            if data.d[i, t] > 0:
+        for k in range(data.nperiodos):
+            if data.d[i, k] > 0:
                 mdl.add_constraint(
                     mdl.sum(
-                        mdl.x[i, j, k, t] for j in range(data.r) for k in range(t + 1)
+                        mdl.x[i, j, t,k] for j in range(data.r) for t in range(k + 1)
                     )
                     == 1
                 )
