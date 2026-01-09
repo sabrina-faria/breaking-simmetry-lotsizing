@@ -39,7 +39,7 @@ if __name__ == "__main__":
     formulations_to_run = [1,2,7,9,8,5,4,12,11,13]  # Altere essa lista conforme necessário
     
 
-    for num in range(2,11):
+    for num in range(8,11):
         context = ProjectContext(f"experimentos/experimento{num}.yml", num)
 
         for formulation_number in formulations_to_run:
